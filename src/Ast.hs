@@ -15,7 +15,7 @@ data Statement where
     deriving (Show)
 
 data Expr where
-    ENum :: Integer -> Expr
+    ENum :: Int -> Expr
     EId :: Ident -> Expr
     EOper :: Oper -> Expr -> Expr -> Expr
     deriving (Show)

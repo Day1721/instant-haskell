@@ -1,4 +1,3 @@
-
 module Parser (
     runParsing, 
     testParser,
@@ -18,7 +17,9 @@ type Parser = Parsec Void String
 
 -- runParsing :: String -> String -> Either (ParseError (Token String) Void) Program
 runParsing :: String -> String -> Either String Program
-runParsing = undefined --runParser manyParser
+runParsing name code = case runParser manyParser name code of
+    Left err -> undefined
+    Right p -> Right p
 
 testParser :: String -> IO ()
 testParser = parseTest manyParser
@@ -47,6 +48,7 @@ expr = makeExprParser terminals operators where
     terminals :: Parser Expr
     terminals = EId  <$> identifier
             <|> ENum <$> decimal
+            <|> between (symbol "(") (symbol ")") expr
 
     operators :: [[Operator Parser Expr]]
     operators = [[ 
@@ -60,13 +62,6 @@ expr = makeExprParser terminals operators where
 
 expressionP :: Parser Statement
 expressionP = SExpr <$> expr
-    -- e <- expr
-    -- return $ SExpr e
-
--- expressionP' :: Parser Statement
--- expressionP' = expr >>= \e ->
---     semicolon >>
---     return $ SExpr e
 
 assignmentP :: Parser Statement
 assignmentP = identifier >>= \i ->

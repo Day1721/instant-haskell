@@ -5,5 +5,5 @@ import LLVMTranslator
 
 main :: IO ()
 main = mainBase translator where
-    translator = TranslatorModule (\s -> s ++ ".ll") translate
+    translator = TranslatorModule (\s -> s ++ ".ll") $ const translate
     
