@@ -4,6 +4,7 @@
 
 module JVMTranslator (translate) where
 
+import TranslatorBase
 import Ast
 import Data.Either (either)
 import Data.List (nub)
@@ -15,21 +16,6 @@ import Control.Monad.Except
 import Control.Monad.Writer
 import Control.Monad.State
 import Debug.Trace
-
-type RunnerT m = ExceptT String (WriterT String m)
-type Runner = RunnerT Identity
-type Variables = M.Map String Int
-
--- induction here: "tellInstr" can return any monad, which has "RunnerT" somewhere inside
-class Translator m where
-    tellInstr :: String -> m ()
-
-instance {-# OVERLAPPING #-} Monad m => Translator (RunnerT m) where
-    tellInstr s = tell $ "\t" ++ s ++ "\n"
-
--- added here just because wouldn't use UndecidableInstances
-instance (Monad i, Translator i, MonadTrans m) => Translator (m i) where
-    tellInstr = lift . tellInstr 
 
 translate :: String -> Program -> Either String String
 translate name p = let 
@@ -107,14 +93,6 @@ optimizeStack p = let
                 LT -> EOper o r l
                 _ -> EOper o l r
 
-        -- optimizeExact (EOper o l r) = let
-        --     DepthCounter ld lv = optimizeExpr l
-        --     DepthCounter rd rv = optimizeExpr r
-        --     in case trace (show $ compare ld rd) (compare ld rd) of
-        --         LT -> DepthCounter rd       (EOper o rv lv)
-        --         EQ -> DepthCounter (ld + 1) (EOper o lv rv)
-        --         GT -> DepthCounter ld       (EOper o lv rv)
-
         justCount = flip go $ \o l r _ -> EOper o l r
         in case expr of
             EOper OPlus l r -> optimizeExact expr
@@ -139,8 +117,6 @@ countVariables = let
 translateProgram :: Program -> Runner ()
 translateProgram p = evalStateT (foreach translateStatement p) M.empty
 
-
-type StatedRunner = StateT Variables Runner
 
 translateStatement :: Statement -> StatedRunner ()
 translateStatement = let 
@@ -171,12 +147,8 @@ translateStatement = let
             Just idx -> tellStore idx
             Nothing -> modify (M.insert x maxx) >> 
                 tellStore maxx where
-                    maxx = 1 + maximum (M.elems s)
+                    maxx = 1 + maximum (0 : M.elems s)
     
     in \case
         SExpr e -> printResultOf (translateExpression e)
         SAss x e -> assignTo (translateExpression e) x
-
-
-foreach :: (Monad m, Foldable f) => (a -> m ()) -> f a -> m ()
-foreach f c = foldM_ (const f) () c

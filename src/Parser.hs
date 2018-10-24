@@ -15,10 +15,9 @@ import qualified Text.Megaparsec.Char.Lexer as L
 
 type Parser = Parsec Void String
 
--- runParsing :: String -> String -> Either (ParseError (Token String) Void) Program
 runParsing :: String -> String -> Either String Program
 runParsing name code = case runParser manyParser name code of
-    Left err -> undefined
+    Left err -> Left $ show err 
     Right p -> Right p
 
 testParser :: String -> IO ()

@@ -21,6 +21,7 @@ executable insc_jvm
                        Ast,
                        MainBase,
                        Analyser,
+                       TranslatorBase,
                        JVMTranslator
   build-depends:       base >= 4.7 && < 5,
                        megaparsec >= 6.5.0 && < 7,
@@ -38,10 +39,12 @@ executable insc_llvm
                        Ast,
                        MainBase,
                        Analyser,
+                       TranslatorBase,
                        LLVMTranslator
   build-depends:       base >= 4.7 && < 5,
                        megaparsec >= 6.5.0 && < 7,
                        parser-combinators >= 1 && < 2,
                        filepath >= 1.4 && < 2,
                        directory >= 1.3 && < 2,
+                       mtl >= 2.2 && < 3,
                        containers >= 0.5 && < 1
