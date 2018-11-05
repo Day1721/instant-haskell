@@ -32,6 +32,13 @@ translateT name p = tellHead name >>
     translateProgram p' >>
     tellTail
 
+instance Show Oper where
+    show OPlus = "iadd"
+    show OMinus = "isub"
+    show OMulti = "imul"
+    show ODiv = "idiv"
+
+
 tellLoad :: Translator m => Int -> m ()
 tellLoad n | n <= 3 = tellInstr $ "iload_" ++ show n
            | otherwise = tellInstr $ "iload " ++ show n
@@ -41,7 +48,7 @@ tellStore n | n <= 3 = tellInstr $ "istore_" ++ show n
             | otherwise = tellInstr $ "istore " ++ show n
 
 tellConst :: Translator m => Int -> m ()
-tellConst n | n > 0 && n <= 5 = tellInstr $ "iconst_" ++ show n
+tellConst n | n >= 0 && n <= 5 = tellInstr $ "iconst_" ++ show n
             | n == -1 = tellInstr $ "iconst_m1"
             | otherwise = tellInstr $ "bipush " ++ show n
 
@@ -130,12 +137,6 @@ translateStatement = let
             translateExpression right >>
             tellInstr (operToInstr oper)
     
-    operToInstr :: Oper -> String
-    operToInstr OPlus = "iadd"
-    operToInstr OMinus = "isub"
-    operToInstr OMulti = "imul"
-    operToInstr ODiv = "idiv"
-
     printResultOf :: StatedRunner () -> StatedRunner ()
     printResultOf innerMonad = tellInstr "getstatic java/lang/System/out Ljava/io/PrintStream;" >>
         innerMonad >>

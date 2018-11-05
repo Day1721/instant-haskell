@@ -68,13 +68,6 @@ tellTail =
     tellInstr "ret i32 0" >>
     tell "}\n"
 
--- tellNewLocal :: String -> StatedRunner Int 
--- tellNewLocal name = get >>= \s -> let
---     maxx = 1 + maximum (0 : M.elems s)
---     in tell (var maxx ++ " = alloc i32, align 4\n") >>
---          modify (M.insert name maxx) >>
---          return maxx
-
 translateProgram :: Program -> Runner ()
 translateProgram p = evalStateT (foreach translateStatement p) mempty
 

@@ -1,5 +1,5 @@
 module Parser (
-    runParsing, 
+    runParsing,
     testParser,
     ) where
 
@@ -17,7 +17,7 @@ type Parser = Parsec Void String
 
 runParsing :: String -> String -> Either String Program
 runParsing name code = case runParser manyParser name code of
-    Left err -> Left $ show err 
+    Left err -> Left $ show err
     Right p -> Right p
 
 testParser :: String -> IO ()
@@ -51,10 +51,10 @@ expr = makeExprParser terminals operators where
 
     operators :: [[Operator Parser Expr]]
     operators = [[ 
-            InfixL (EOper OMulti <$ symbol "*"), 
-            InfixL (EOper ODiv   <$ symbol "/") 
+            InfixL (EOper OMulti <$ symbol "*"),
+            InfixL (EOper ODiv   <$ symbol "/")
         ], [ 
-            InfixL (EOper OMinus <$ symbol "-") 
+            InfixL (EOper OMinus <$ symbol "-")
         ],[
             InfixR (EOper OPlus  <$ symbol "+")
         ]]

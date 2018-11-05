@@ -26,6 +26,5 @@ instance (Monad i, Translator i, MonadTrans m) => Translator (m i) where
 type StatedRunner = StateT Variables Runner
 
 
-
 foreach :: (Monad m, Foldable f) => (a -> m ()) -> f a -> m ()
 foreach f c = foldM_ (const f) () c
