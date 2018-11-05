@@ -71,14 +71,14 @@ tellTail =
 translateProgram :: Program -> Runner ()
 translateProgram p = evalStateT (foreach translateStatement p) mempty
 
+instance Show Oper where
+    show OPlus = "iadd"
+    show OMinus = "isub"
+    show OMulti = "imul"
+    show ODiv = "idiv"
+
 translateStatement :: Statement -> StateT TranslatorState Runner ()
 translateStatement = let
-    operToInstr :: Oper -> String
-    operToInstr OPlus = "add"
-    operToInstr OMinus = "sub"
-    operToInstr OMulti = "mul"
-    operToInstr ODiv = "sdiv"
-
     expr :: Expr -> StateT TranslatorState Runner ValueType
     expr (EId x) = get >>= \s -> case M.lookup x $ vars s of
         Just i -> return i
@@ -87,7 +87,7 @@ translateStatement = let
     expr (EOper o l r) = expr l >>= \lv ->
         expr r >>= \rv -> 
         newRegister >>= \res ->
-        tellInstr (show res ++ " = " ++ operToInstr o ++ " i32 " ++ show lv ++ ", " ++ show rv) >>
+        tellInstr (show res ++ " = " ++ show o ++ " i32 " ++ show lv ++ ", " ++ show rv) >>
         return res
 
     print :: ValueType -> StateT TranslatorState Runner ()

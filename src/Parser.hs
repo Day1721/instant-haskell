@@ -1,7 +1,4 @@
-module Parser (
-    runParsing,
-    testParser,
-    ) where
+module Parser (runParsing) where
 
 import Ast
 import Control.Monad
@@ -19,10 +16,6 @@ runParsing :: String -> String -> Either String Program
 runParsing name code = case runParser manyParser name code of
     Left err -> Left $ show err
     Right p -> Right p
-
-testParser :: String -> IO ()
-testParser = parseTest manyParser
-
 
 sc :: Parser ()
 sc = L.space space1 empty empty

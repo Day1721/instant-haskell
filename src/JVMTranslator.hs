@@ -50,7 +50,9 @@ tellStore n | n <= 3 = tellInstr $ "istore_" ++ show n
 tellConst :: Translator m => Int -> m ()
 tellConst n | n >= 0 && n <= 5 = tellInstr $ "iconst_" ++ show n
             | n == -1 = tellInstr $ "iconst_m1"
-            | otherwise = tellInstr $ "bipush " ++ show n
+            | n <= 127 && n >= (-128) = tellInstr $ "bipush " ++ show n
+            | n <= 32767 && n >= (-32768) = tellInstr $ "sipush " ++ show n
+            | otherwise = tellInstr $ "ldc " ++ show n
 
 tellHead :: String -> Runner ()
 tellHead name = tell (".class public " ++ className ++ "\n") >>
@@ -135,7 +137,7 @@ translateStatement = let
             Nothing -> fail $ "Non-defined variable: " ++ x
         EOper oper left right -> translateExpression left >>
             translateExpression right >>
-            tellInstr (operToInstr oper)
+            tellInstr (show oper)
     
     printResultOf :: StatedRunner () -> StatedRunner ()
     printResultOf innerMonad = tellInstr "getstatic java/lang/System/out Ljava/io/PrintStream;" >>
