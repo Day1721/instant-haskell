@@ -72,10 +72,10 @@ translateProgram :: Program -> Runner ()
 translateProgram p = evalStateT (foreach translateStatement p) mempty
 
 instance Show Oper where
-    show OPlus = "iadd"
-    show OMinus = "isub"
-    show OMulti = "imul"
-    show ODiv = "idiv"
+    show OPlus = "add"
+    show OMinus = "sub"
+    show OMulti = "mul"
+    show ODiv = "sdiv"
 
 translateStatement :: Statement -> StateT TranslatorState Runner ()
 translateStatement = let

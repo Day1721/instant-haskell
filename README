@@ -1,0 +1,22 @@
+Kompilator języka instant do JVM i LLVM
+Napisany w języku haskell przy użyciu platformy stack
+(w przypadku niedostępności stack w "$PATH" używa stack-1.6 z folderu PUBLIC)
+
+Budowanie i uruchamianie:
+buduje się za pom. polecenia make, którego skutkiem jest utworzenie dwóch plików wykonywalnych: insc_jvm i insc_llvm
+uruchamia się go za pom wyżej wymienionych poleceń, podając jako argument plik *.ins z kodem do skompilowania
+
+Struktura:
+  - Parser: kod zajmujący się parsowaniem kodu wejściowego do postaci drzewa AST
+  - Ast: typy, opisujące drzewo AST
+  - TranslatorBase: podstawowe funkcje i typy translatorach
+  - JVMTranslator/LLVMTranslator: tłumaczą ast odpowiednio do JVM i LLVM 
+  - Main: kod, bezpośrednio uruchamiany przez stack w plikack wykonywalnych
+  - Scripts: pliki wykonywalne (*.sh), wołające haskella za pom. stacka
+
+Do napisania parsera zostały wykorzystane biblioteki megaparsec i parser-combinators
+Dodatkowo w translatorach do jvm i llvm są wykorzystywane mtl, containers.
+Do pracy z plikiem wejściowym i wyjściowym używane są biblioteki filepath i directory 
+
+Przy pisaniu parsera sugerowałem się tutorialem do megaparseca pod linkiem:
+    https://markkarpov.com/megaparsec/parsing-simple-imperative-language.html
