@@ -58,7 +58,7 @@ tellHead :: String -> Runner ()
 tellHead name = tell (".class public " ++ className ++ "\n") >>
     tell ".super java/lang/Object\n\n" >>
     tell ".method public static main([Ljava/lang/String;)V\n" where
-        className = upperFirst $ takeBaseName name
+        className = takeBaseName name
         upperFirst (h:t) = toUpper h : t
 
 tellTail :: Runner ()
